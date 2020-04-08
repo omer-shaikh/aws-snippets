@@ -9,11 +9,13 @@ RETENTION=6
 SNAP_CREATION=/home/ec2-user/oshaikh/pinak/snap_creation
 SNAP_DELETION=/home/ec2-user/oshaikh/pinak/snap_deletion
 EMAIL_LIST="hello@yellow.com
-#EMAIL_LIST="omer.shaikh@careem.com"
+
 echo "List of Snapshots Creation Status" > $SNAP_CREATION
 echo "List of Snapshots Deletion Status" > $SNAP_DELETION
+
 # Check whether the volumes list file is available or not?
 if [ -f $VOLUMES_LIST ]; then
+
 # Creating Snapshot for each volume using for loop
 
 for VOL_INFO in `cat $VOLUMES_LIST`
@@ -23,6 +25,7 @@ for VOL_INFO in `cat $VOLUMES_LIST`
 
         VOL_ID=`echo $VOL_INFO | awk -F":" '{print $1}'`
         VOL_NAME=`echo $VOL_INFO | awk -F":" '{print $2}'`
+        
             # Creating the Snapshot of the Volumes with Proper Description.
 
         DESCRIPTION="${VOL_NAME}_${DATE}"
@@ -46,9 +49,11 @@ for VOL_INFO in `cat $VOLUMES_LIST`
         VOL_NAME=`echo $VOL_INFO | awk -F":" '{print $2}'`
 
 # Getting the Snapshot details of each volume.
+
         /usr/local/bin/aws ec2 describe-snapshots --query Snapshots[*].[SnapshotId,VolumeId,Description,StartTime] --output text --filters "Name=status,Values=completed" "Name=volume-id,Values=$VOL_ID" | grep -v "CreateImage" > $SNAPSHOT_INFO
 
 # Snapshots Retention Period Checking and if it crosses delete them.
+
     while read SNAP_INFO
         do
             SNAP_ID=`echo $SNAP_INFO | awk '{print $1}'`
